@@ -55,6 +55,13 @@ def get_to(params):
         return None
     return Address.parse(to_line)
 
+def get_from(params):
+    """ Returns the From line parameters """
+    from_line = get_header(params, "From")
+    if not from_line:
+        return ""
+    return from_line.split(" ")[0].strip(" \"")
+
 
 def indialog(params):
     """ indicates whether the message is an in-dialog one """

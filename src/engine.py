@@ -102,7 +102,10 @@ def parse_params(params):
             cfg = extra_params[flavor]
         else:
             cfg.update(extra_params[flavor])
-
+    
+    if cfg is None:
+        cfg = {}
+    cfg["from"] = utils.get_from(params)
     return flavor, to, cfg
 
 
@@ -135,7 +138,7 @@ def handle_call(call, key, method, params):
 
         try:
             flavor, to, cfg = parse_params(params)
-            new_call = Call(key, mi_conn, sdp, flavor, to, cfg)
+            new_call = Call(key, mi_conn, sdp, flavor, to, from_, cfg)
             calls[key] = new_call
             mi_reply(key, method, 200, 'OK', new_call.get_body())
         except UnsupportedCodec:

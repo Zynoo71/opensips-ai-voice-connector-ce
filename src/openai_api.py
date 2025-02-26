@@ -33,6 +33,7 @@ from websockets.exceptions import ConnectionClosedOK, ConnectionClosedError
 from ai import AIEngine
 from codec import get_codecs, CODECS, UnsupportedCodec
 from config import Config
+from instruction_loader import loader
 
 OPENAI_API_MODEL = "gpt-4o-realtime-preview-2024-10-01"
 OPENAI_URL_FORMAT = "wss://api.openai.com/v1/realtime?model={}"
@@ -59,7 +60,8 @@ class OpenAI(AIEngine):  # pylint: disable=too-many-instance-attributes
         self.key = self.cfg.get(["key", "openai_key"], "OPENAI_API_KEY")
         self.voice = self.cfg.get(["voice", "openai_voice"],
                                   "OPENAI_VOICE", "alloy")
-        self.instructions = self.cfg.get("instructions", "OPENAI_INSTRUCTIONS")
+        self.instructions = loader.get_instruction(
+            self.cfg.get("from", "unknown")) or self.cfg.get("instructions", "OPENAI_INSTRUCTIONS")
         self.intro = self.cfg.get("welcome_message", "OPENAI_WELCOME_MSG")
         self.transfer_to = self.cfg.get("transfer_to", "OPENAI_TRANSFER_TO")
         self.transfer_by = self.cfg.get("transfer_by", "OPENAI_TRANSFER_BY", self.call.to)

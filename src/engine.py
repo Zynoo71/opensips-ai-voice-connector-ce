@@ -105,7 +105,7 @@ def parse_params(params):
     
     if cfg is None:
         cfg = {}
-    cfg["from"] = utils.get_from(params)
+    cfg["from"] = utils.get_from(params)[-10:]
     return flavor, to, cfg
 
 

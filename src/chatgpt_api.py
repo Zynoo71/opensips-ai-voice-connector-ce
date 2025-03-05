@@ -52,13 +52,28 @@ class ChatGPT:
 
         response = await self.api.chat.completions.create(
             model=self.model,
-            messages=self.contexts[b2b_key]
+            messages=self.contexts[b2b_key],
+            tools=[
+                {
+                    "type": "function",
+                    "function": {
+                          "name": "terminate_dialog",
+                          "description": "Called when the current dialog can be terminated",
+                          "strict": False,
+                          "parameters": {
+                            "type": "object",
+                            "properties": {}
+                        }
+                    }
+                }
+            ]
         )
 
+        if response.choices[0].message.tool_calls:
+            logging.info("Assistant: %s", "hang up")
+            return "hang up"
         role = response.choices[0].message.role
         content = response.choices[0].message.content
         self.contexts[b2b_key].append({"role": role, "content": content})
         logging.info("Assistant: %s", content)
         return content
-
-# vim: tabstop=8 expandtab shiftwidth=4 softtabstop=4
